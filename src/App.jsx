@@ -2,14 +2,15 @@ import React, {useState, useEffect, useRef} from 'react'
 import BooksContainer from './components/BooksContainer'
 import Header from './components/Header'
 import DetailPanel from './components/DetailsPanel'
+import Search from './components/Search'
 import {GlobalStyle} from './styles'
 import {Transition} from 'react-transition-group'
-import Search from './components/Search'
 
 const App = () => {
   const [books, setBooks] = useState([])
   const [selectedBook, setSelectedBook] = useState(null)
   const [showPanel, setShowPanel] = useState(false)
+  const [filteredBooks, setFilteredBooks] = useState([])
 
   //console.log('ce message apparaitra à chaque fois que le composant renders')
 
@@ -22,6 +23,7 @@ const App = () => {
         const books = await response.json()
         console.log('our json-ified response: ', books)
         setBooks(books)
+        setFilteredBooks(books)
       } catch (errors) {
         console.log(errors)
       }
@@ -40,16 +42,21 @@ const App = () => {
   }
 
   const filterBooks = (searchTerm) => {
+    const stringSearch = (bookAttribute, searchTerm) =>
+      bookAttribute.toLowerCase().includes(searchTerm.toLowerCase())
+
     if (!searchTerm) {
-      return books
+      setFilteredBooks(books)
     } else {
-      return books.filter(
-        (book) =>
-          book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          book.author.toLowerCase().includes(searchTerm.toLowerCase()),
+      setFilteredBooks(
+        books.filter(
+          (book) => stringSearch(book.title, searchTerm) || stringSearch(book.author, searchTerm),
+        ),
       )
     }
   }
+
+  const hasFiltered = filteredBooks.length !== books.length
 
   const panelRef = useRef(null)
   //console.log(selectedBook)
@@ -58,9 +65,14 @@ const App = () => {
     <>
       <GlobalStyle />
       <Header>
-        <Search />
+        <Search filterBooks={filterBooks} />
       </Header>
-      <BooksContainer books={books} pickBook={pickBook} isPanelOpen={showPanel} />
+      <BooksContainer
+        books={filteredBooks}
+        pickBook={pickBook}
+        isPanelOpen={showPanel}
+        title={hasFiltered ? 'Search results' : 'All books'}
+      />
       <Transition in={showPanel} timeout={300} nodeRef={panelRef}>
         {(state) => (
           <DetailPanel book={selectedBook} closePanel={closePanel} state={state} panel={panelRef} />
