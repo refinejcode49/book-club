@@ -31,7 +31,7 @@ export const P = styled.p`
   font-family: 'Libre Baskerville', serif;
   font-size: 16px;
   line-height: 1.6;
-  margin: 30px 0 0;
+  margin: 30px 0px 0px;
 `
 
 export const Em = styled.em`

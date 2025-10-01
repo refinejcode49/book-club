@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react'
 import {Panel, P, Em, CloseWrapper, BG} from './styles'
-import { Close } from '../../styles'
+import {Close} from '../../styles'
 import Book from '../Book'
 
 const DetailPanel = ({book, closePanel, state, panelRef}) => {
@@ -13,7 +13,7 @@ const DetailPanel = ({book, closePanel, state, panelRef}) => {
       panelRef.current = node
     }
   }
-  
+
   useEffect(() => {
     if (prevBook.current !== book) {
       panelEl.current.scrollTop = 0
